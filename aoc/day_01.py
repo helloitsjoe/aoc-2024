@@ -1,5 +1,4 @@
 import re
-import os
 
 
 def part_1_get_sum(left: list[int], right: list[int]) -> int:
