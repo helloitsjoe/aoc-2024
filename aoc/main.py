@@ -1,6 +1,5 @@
-from day_01 import run
+from aoc.day_01 import run
 
-foo = "bar"
 
 def main():
     run()
