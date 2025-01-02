@@ -26,7 +26,7 @@ def find_safe(level: list[int], dampen: bool = False) -> bool:
         valid_increasing = (_dir == "inc" and curr <= prev) or curr - prev > 3
         valid_decreasing = (_dir == "dec" and prev <= curr) or prev - curr > 3
 
-        if (valid_increasing) or (valid_decreasing):
+        if valid_increasing or valid_decreasing:
             if not dampen:
                 return False
             for x in range(len(level)):
@@ -41,7 +41,6 @@ def find_safe(level: list[int], dampen: bool = False) -> bool:
 
 def run(filepath: str):
     with open(filepath, encoding="utf8") as file:
-        # levels = [level.split(" ") for level in TEST_DATA.splitlines()]
         data = TEST_DATA if os.getenv("TEST") else file.read()
         levels = [level.split(" ") for level in data.splitlines()]
         maybe_safe = [
