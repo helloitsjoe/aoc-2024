@@ -1,9 +1,9 @@
 import os
-from aoc.day_02 import run
+from aoc.day_03 import run
 
 
 def main():
-    filepath = os.path.join(os.getcwd(), "aoc", "day_02.txt")
+    filepath = os.path.join(os.getcwd(), "aoc", "day_03.txt")
     run(filepath)
 
 
