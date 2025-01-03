@@ -1,6 +1,6 @@
-import os
 import re
 
+DATA_FILE = "day_03.txt"
 
 REGEX = r"^mul\((\d{1,3}),(\d{1,3})\)"
 
@@ -27,11 +27,9 @@ def parse_multiply(inpt: str) -> list[int]:
     return [multiply(e) for e in expressions]
 
 
-def run(filepath: str):
-    with open(filepath, encoding="utf8") as file:
-        data = TEST_DATA if os.getenv("TEST") else file.read()
-        results = parse_multiply(data)
-        print(sum(results))
+def run(data: str):
+    results = parse_multiply(data)
+    print(sum(results))
 
 
 TEST_DATA = """

@@ -1,4 +1,4 @@
-import os
+DATA_FILE = "day_02.txt"
 
 
 def two_window(start_idx: int, items: list[int]) -> tuple[int, int | None]:
@@ -39,15 +39,13 @@ def find_safe(level: list[int], dampen: bool = False) -> bool:
     return True
 
 
-def run(filepath: str):
-    with open(filepath, encoding="utf8") as file:
-        data = TEST_DATA if os.getenv("TEST") else file.read()
-        levels = [level.split(" ") for level in data.splitlines()]
-        maybe_safe = [
-            (level, find_safe(list(map(int, level)), True)) for level in levels
-        ]
-        print(maybe_safe)
-        print(sum(safe is True for _, safe in maybe_safe))
+def run(data: str):
+    levels = [level.split(" ") for level in data.splitlines()]
+    maybe_safe = [
+        (level, find_safe(list(map(int, level)), True)) for level in levels
+    ]
+    print(maybe_safe)
+    print(sum(safe is True for _, safe in maybe_safe))
 
 
 TEST_DATA = """7 6 4 2 1
