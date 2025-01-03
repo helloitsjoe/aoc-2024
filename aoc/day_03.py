@@ -13,11 +13,28 @@ def multiply(inpt: str) -> int:
 
 
 def get_valid_expressions(inpt: str) -> list[str]:
+    """
+    Valid expressions are in the form `mul(x,y)` where x and y are ints between
+    1 and 3 digits.
+
+    Part 2: do() and don't() toggle subsequent expressions enabled/disabled
+    """
     expressions = []
+    enabled = True
     for i in range(len(inpt)):
-        match = re.search(REGEX, inpt[i:])
-        if match:
-            expressions.append(match.group())
+        if enabled:
+            disable = re.search(r"^don't\(\)", inpt[i:])
+            if disable:
+                enabled = False
+        if not enabled:
+            enable = re.search(r"^do\(\)", inpt[i:])
+            if enable:
+                enabled = True
+        if enabled:
+            match = re.search(REGEX, inpt[i:])
+            if match:
+                expressions.append(match.group())
+
     print(expressions)
     return expressions
 
@@ -33,5 +50,5 @@ def run(data: str):
 
 
 TEST_DATA = """
-xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))
+xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))
 """
