@@ -22,14 +22,10 @@ def get_valid_expressions(inpt: str) -> list[str]:
     expressions = []
     enabled = True
     for i in range(len(inpt)):
-        if enabled:
-            disable = re.search(r"^don't\(\)", inpt[i:])
-            if disable:
-                enabled = False
-        if not enabled:
-            enable = re.search(r"^do\(\)", inpt[i:])
-            if enable:
-                enabled = True
+        if re.search(r"^don't\(\)", inpt[i:]):
+            enabled = False
+        if re.search(r"^do\(\)", inpt[i:]):
+            enabled = True
         if enabled:
             match = re.search(REGEX, inpt[i:])
             if match:
