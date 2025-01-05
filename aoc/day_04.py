@@ -1,37 +1,37 @@
 DATA_FILE = "day_04.txt"
 
 
-def find_horizontal(data: str):
-    total = 0
-    joined = " ".join(data.splitlines())
-    for i in range(len(joined)):
-        end = i + 4
-        if joined[i:end] == "XMAS":
-            total += 1
-        if joined[i:end] == "SAMX":
-            total += 1
-    return total
+def join_horizontal(data: str):
+    return " ".join(data.splitlines())
 
 
-def find_vertical(data: str):
-    total = 0
+def join_vertical(data: str):
     joined_vertical = ""
-    rows = data.splitlines()
-    # for y in range(len(rows)):
-    #     for x in range(len(rows[0])):
-    #         # joined_vertical +=
+    rows = data.strip().splitlines()
+    for y in range(len(rows)):
+        for x in range(len(rows[0])):
+            joined_vertical += rows[x][y]
+        joined_vertical += " "
+    return joined_vertical.strip()
 
-    for i in range(len(joined_vertical)):
+
+# def join_diagonal(data: str):
+#     joined_diagonal = ""
+#     rows = data.strip().splitlines()
+#     for y in range(len(rows)):
+#         for x in range(len(rows[0])):
+#             joined_diagonal += rows[x][y]
+#         joined_diagonal += " "
+#     return joined_diagonal.strip()
+
+
+def count(data: str):
+    total = 0
+    for i in range(len(data)):
         end = i + 4
-        if joined_vertical[i:end] == "XMAS":
-            total += 1
-        if joined_vertical[i:end] == "SAMX":
+        if data[i:end] == "XMAS" or data[i:end] == "SAMX":
             total += 1
     return total
-
-
-def find_diagonal(data: str):
-    return 1
 
 
 def run(data: str):
@@ -39,7 +39,11 @@ def run(data: str):
     Prints the number of instances of XMAS in the input
     """
     total = sum(
-        (find_horizontal(data), find_vertical(data), find_diagonal(data))
+        (
+            count(join_horizontal(data)),
+            count(join_vertical(data)),
+            # count(join_diagonal(data)),
+        )
     )
     print(total)
 
