@@ -15,14 +15,40 @@ def join_vertical(data: str):
     return joined_vertical.strip()
 
 
-# def join_diagonal(data: str):
-#     joined_diagonal = ""
-#     rows = data.strip().splitlines()
-#     for y in range(len(rows)):
-#         for x in range(len(rows[0])):
-#             joined_diagonal += rows[x][y]
-#         joined_diagonal += " "
-#     return joined_diagonal.strip()
+def join_diagonal(data: str, right_to_left: bool = False):
+    joined_diagonal = ""
+    rows = data.strip().splitlines()
+    if right_to_left:
+        rows = [row[::-1] for row in rows]
+
+    for i in range(len(rows[0])):
+        y = 0
+        x = i
+        remaining_letters = len(rows[y][x:])
+        while y < len(rows):
+            if x < len(rows) and remaining_letters >= 4:
+                joined_diagonal += rows[y][x]
+                y += 1
+                x += 1
+            else:
+                break
+        joined_diagonal += " "
+    joined_diagonal = joined_diagonal.strip() + " "
+
+    for i in range(len(rows)):
+        y = i + 1
+        x = 0
+        remaining_letters = len(rows[y:][x:])
+        while y < len(rows):
+            if x < len(rows) and remaining_letters >= 4:
+                joined_diagonal += rows[y][x]
+                y += 1
+                x += 1
+            else:
+                break
+        joined_diagonal += " "
+
+    return joined_diagonal.strip()
 
 
 def count(data: str):
@@ -42,10 +68,12 @@ def run(data: str):
         (
             count(join_horizontal(data)),
             count(join_vertical(data)),
-            # count(join_diagonal(data)),
+            count(join_diagonal(data)),
+            count(join_diagonal(data, True)),
         )
     )
     print(total)
+    return total
 
 
 TEST_DATA = """
