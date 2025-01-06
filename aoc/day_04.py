@@ -72,7 +72,6 @@ def run(data: str):
             count(join_diagonal(data, True)),
         )
     )
-    print(total)
     return total
 
 

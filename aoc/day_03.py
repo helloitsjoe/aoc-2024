@@ -42,7 +42,7 @@ def parse_multiply(inpt: str) -> list[int]:
 
 def run(data: str):
     results = parse_multiply(data)
-    print(sum(results))
+    return sum(results)
 
 
 TEST_DATA = """

@@ -45,7 +45,7 @@ def run(data: str):
         (level, find_safe(list(map(int, level)), True)) for level in levels
     ]
     print(maybe_safe)
-    print(sum(safe is True for _, safe in maybe_safe))
+    return sum(safe is True for _, safe in maybe_safe)
 
 
 TEST_DATA = """7 6 4 2 1

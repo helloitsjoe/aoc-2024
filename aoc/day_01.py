@@ -31,7 +31,7 @@ def _split_lists(lists: str) -> tuple[list[int], list[int]]:
 def run(filepath: str):
     with open(filepath, encoding="utf8") as file:
         left, right = _split_lists(file.read())
-        print(part_2_get_similarity(left, right))
+        return part_2_get_similarity(left, right)
 
 
 TEST_INPUT = """3   4
