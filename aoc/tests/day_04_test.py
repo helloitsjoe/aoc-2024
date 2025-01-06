@@ -4,6 +4,7 @@ from aoc.day_04 import (
     join_horizontal,
     join_diagonal,
     count,
+    count_cross,
     TEST_DATA,
 )
 
@@ -39,6 +40,10 @@ def test_count_diagonal():
         count(join_diagonal(TEST_DATA)) + count(join_diagonal(TEST_DATA, True))
         == 10
     )
+
+
+def test_count_cross():
+    assert count_cross(TEST_DATA) == 9
 
 
 def test_run():

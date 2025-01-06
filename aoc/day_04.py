@@ -60,6 +60,37 @@ def count(data: str):
     return total
 
 
+def count_cross(data: str):
+    total = 0
+    rows = data.strip().splitlines()
+    for y, row in enumerate(rows):
+        if y >= len(rows) - 2:
+            break
+        for x, letter in enumerate(row):
+            if x >= len(row) - 2:
+                break
+            if (
+                letter == "M"
+                and rows[y + 1][x + 1] == "A"
+                and rows[y + 2][x + 2] == "S"
+            ):
+                if (row[x + 2] == "M" and rows[y + 2][x] == "S") or (
+                    row[x + 2] == "S" and rows[y + 2][x] == "M"
+                ):
+                    total += 1
+            elif (
+                letter == "S"
+                and rows[y + 1][x + 1] == "A"
+                and rows[y + 2][x + 2] == "M"
+            ):
+                if (row[x + 2] == "M" and rows[y + 2][x] == "S") or (
+                    row[x + 2] == "S" and rows[y + 2][x] == "M"
+                ):
+                    total += 1
+
+    return total
+
+
 def run(data: str):
     """
     Prints the number of instances of XMAS in the input
@@ -73,6 +104,7 @@ def run(data: str):
         )
     )
     return total
+    # return count_cross(data)
 
 
 TEST_DATA = """
