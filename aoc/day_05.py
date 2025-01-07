@@ -9,6 +9,20 @@ def parse_lists(lists: str) -> list[list[int]]:
     return [list(map(int, pages.split(","))) for pages in lists.splitlines()]
 
 
+def get_middle_page(pages: list[int], parsed_orders: list[list[int]]):
+    for num in pages:
+        for order in parsed_orders:
+            a, b = order
+            if (
+                a in pages
+                and b in pages
+                and a == num
+                and pages.index(b) < pages.index(a)
+            ):
+                return 0
+    return pages[int(len(pages) / 2)]
+
+
 def run(data: str):
     """
     Data has two sections: ordering rules and ordered pages.
@@ -19,8 +33,12 @@ def run(data: str):
     orders, lists = data.strip().split("\n\n")
     parsed_orders = parse_orders(orders)
     parsed_lists = parse_lists(lists)
-    print(parsed_orders)
-    print(parsed_lists)
+
+    total = 0
+    for pages in parsed_lists:
+        total += get_middle_page(pages, parsed_orders)
+
+    return total
 
 
 TEST_DATA = """47|53
