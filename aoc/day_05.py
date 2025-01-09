@@ -34,8 +34,12 @@ def get_middle_page_incorrect(pages: list[int], full_order: list[int]):
 
 
 def get_full_order(orders: list[list[int]]) -> list[int]:
-    print("ORDERS", orders)
+    if not orders:
+        return []
+
+    # [[34, 12], [34, 56], [56, 12]]
     if len(orders) == 3:
+        print(orders)
         a_counts: dict[int, int] = {}
         b_counts: dict[int, int] = {}
         first = None
@@ -58,7 +62,7 @@ def get_full_order(orders: list[list[int]]) -> list[int]:
                 mid = a
 
         if first is None or mid is None or last is None:
-            raise RuntimeError("fuck")
+            raise RuntimeError("this should not happen")
 
         return [first, mid, last]
 
@@ -78,8 +82,8 @@ def get_full_order(orders: list[list[int]]) -> list[int]:
         seen_a[a] = True
         seen_b[b] = True
 
-    print("A", sorted(list(seen_a)))
-    print("B", sorted(list(seen_b)))
+    # print("A", sorted(list(seen_a)))
+    # print("B", sorted(list(seen_b)))
 
     if sorted(list(seen_a)) == sorted(list(seen_b)):
         raise RuntimeError("wut")
@@ -92,16 +96,13 @@ def get_full_order(orders: list[list[int]]) -> list[int]:
         if a in seen_b and b in seen_a:
             new_orders.append([a, b])
 
-    print(first, last)
-    print(new_orders)
-
     if first is None or last is None:
         return []
 
     return [first, *get_full_order(new_orders), last]
 
 
-def run(data: str, should_be_correct: bool | None = True):
+def run(data: str, should_be_correct: bool | None = False):
     """
     Data has two sections: ordering rules and ordered pages.
     Ordering rules specify which pages should come before others
@@ -111,7 +112,7 @@ def run(data: str, should_be_correct: bool | None = True):
     orders, lists = data.strip().split("\n\n")
     parsed_orders = parse_orders(orders)
     parsed_lists = parse_lists(lists)
-    full_order = get_full_order(parsed_orders)
+    # full_order = get_full_order(parsed_orders)
 
     correct_sum = 0
     incorrect_sum = 0
@@ -120,6 +121,17 @@ def run(data: str, should_be_correct: bool | None = True):
         if middle_page_correct > 0:
             correct_sum += middle_page_correct
         else:
+
+            def filter_fn(order: list[int]):
+                a, b = order
+                print("a", a, "b", b)
+                print(pages)
+                return a in pages and b in pages
+
+            relevant_orders = list(filter(filter_fn, parsed_orders))
+            print("all orders", parsed_orders)
+            print("relevant", relevant_orders)
+            full_order = get_full_order(relevant_orders)
             incorrect_sum += get_middle_page_incorrect(pages, full_order)
 
     return correct_sum if should_be_correct else incorrect_sum
