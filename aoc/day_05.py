@@ -24,49 +24,45 @@ def get_middle_page_correct(pages: list[int], parsed_orders: list[list[int]]):
 
 
 def get_middle_page_incorrect(pages: list[int], full_order: list[int]):
-    corrected = []
-    print(full_order)
-    for val in full_order:
-        if val in pages:
-            corrected.append(val)
-
+    corrected = [val for val in full_order if val in pages]
     return corrected[int(len(corrected) / 2)]
+
+
+def _get_last_orders(orders) -> list[int]:
+    # Example: [[34, 12], [34, 56], [56, 12]]
+    a_counts: dict[int, int] = {}
+    b_counts: dict[int, int] = {}
+    first = None
+    last = None
+    mid = None
+    for a, b in orders:
+        if a in a_counts:
+            first = a
+            a_counts[a] += 1
+        else:
+            a_counts[a] = 1
+        if b in b_counts:
+            last = b
+            b_counts[b] += 1
+        else:
+            b_counts[b] = 1
+
+    for a, b in orders:
+        if a_counts[a] == 1:
+            mid = a
+
+    if first is None or mid is None or last is None:
+        raise RuntimeError("this should not happen")
+
+    return [first, mid, last]
 
 
 def get_full_order(orders: list[list[int]]) -> list[int]:
     if not orders:
         return []
 
-    # [[34, 12], [34, 56], [56, 12]]
     if len(orders) == 3:
-        print(orders)
-        a_counts: dict[int, int] = {}
-        b_counts: dict[int, int] = {}
-        first = None
-        last = None
-        mid = None
-        for a, b in orders:
-            if a in a_counts:
-                first = a
-                a_counts[a] += 1
-            else:
-                a_counts[a] = 1
-            if b in b_counts:
-                last = b
-                b_counts[b] += 1
-            else:
-                b_counts[b] = 1
-
-        for a, b in orders:
-            if a_counts[a] == 1:
-                mid = a
-
-        if first is None or mid is None or last is None:
-            raise RuntimeError("this should not happen")
-
-        return [first, mid, last]
-
-    new_orders: list[list[int]] = []
+        return _get_last_orders(orders)
 
     # find first by looking for a that doesn't exist as b
     # find last by looking for b that doesn't exist as a
@@ -75,18 +71,14 @@ def get_full_order(orders: list[list[int]]) -> list[int]:
     # repeat
     first = None
     last = None
-    seen_a = {}
-    seen_b = {}
-
-    for a, b in orders:
-        seen_a[a] = True
-        seen_b[b] = True
-
-    # print("A", sorted(list(seen_a)))
-    # print("B", sorted(list(seen_b)))
+    seen_a = {a: True for a, _ in orders}
+    seen_b = {b: True for _, b in orders}
 
     if sorted(list(seen_a)) == sorted(list(seen_b)):
-        raise RuntimeError("wut")
+        message = "One `a` elem should not be included in `b` and vice versa"
+        raise RuntimeError(message)
+
+    new_orders: list[list[int]] = []
 
     for a, b in orders:
         if a not in seen_b:
@@ -112,7 +104,6 @@ def run(data: str, should_be_correct: bool | None = False):
     orders, lists = data.strip().split("\n\n")
     parsed_orders = parse_orders(orders)
     parsed_lists = parse_lists(lists)
-    # full_order = get_full_order(parsed_orders)
 
     correct_sum = 0
     incorrect_sum = 0
@@ -123,14 +114,9 @@ def run(data: str, should_be_correct: bool | None = False):
         else:
 
             def filter_fn(order: list[int]):
-                a, b = order
-                print("a", a, "b", b)
-                print(pages)
-                return a in pages and b in pages
+                return order[0] in pages and order[1] in pages
 
             relevant_orders = list(filter(filter_fn, parsed_orders))
-            print("all orders", parsed_orders)
-            print("relevant", relevant_orders)
             full_order = get_full_order(relevant_orders)
             incorrect_sum += get_middle_page_incorrect(pages, full_order)
 
