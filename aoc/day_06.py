@@ -31,6 +31,7 @@ def run(data: str) -> int:
     visited = {}
     rows = list(data.strip().splitlines())
     board = [list(row) for row in rows]
+
     for y, _ in enumerate(board):
         for x in range(len(board)):
             if board[y][x] == symbol:
@@ -49,6 +50,7 @@ def run(data: str) -> int:
             next_x = x + DIRECTIONS[symbol][0]
             next_y = y + DIRECTIONS[symbol][1]
         curr = [next_x, next_y]
+
     return len(visited)
 
 
