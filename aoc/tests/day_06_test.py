@@ -2,7 +2,7 @@ from aoc.day_06 import run, TEST_DATA
 
 
 def test_basic():
-    assert run(TEST_DATA) == 41
+    assert run(TEST_DATA) == (41, 0)
 
 
 def test_basic_top():
@@ -11,7 +11,7 @@ def test_basic_top():
 ...
 ...
 """
-    assert run(data) == 1
+    assert run(data) == (1, 0)
 
 
 def test_basic_left():
@@ -20,7 +20,7 @@ def test_basic_left():
 .^#
 .#.
 """
-    assert run(data) == 3
+    assert run(data) == (3, 0)
 
 
 def test_basic_right():
@@ -29,4 +29,15 @@ def test_basic_right():
 .^.
 ...
 """
-    assert run(data) == 2
+    assert run(data) == (2, 0)
+
+
+def test_loop():
+    data = """
+.#...
+....#
+.^...
+#....
+...#.
+"""
+    assert run(data) == (8, 1)

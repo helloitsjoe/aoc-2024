@@ -18,7 +18,7 @@ def get_next_symbol(symbol: str):
             return "^"
 
 
-def run(data: str) -> int:
+def run(data: str) -> tuple[int, int]:
     """
     - Start at ^
     - Move in that direction until you reach a #
@@ -31,18 +31,19 @@ def run(data: str) -> int:
     visited = {}
     rows = list(data.strip().splitlines())
     board = [list(row) for row in rows]
+    loops = 0
 
-    for y, _ in enumerate(board):
-        for x in range(len(board)):
-            if board[y][x] == symbol:
+    for y, row in enumerate(board):
+        for x, val in enumerate(row):
+            if val == symbol:
                 curr = [x, y]
-                visited[f"{x}:{y}"] = 1
 
     while 0 <= curr[1] < len(rows) and 0 <= curr[0] < len(rows[0]):
         x, y = curr[0], curr[1]
-        visited[f"{x}:{y}"] = 1
+        visited[f"{x}:{y}"] = symbol
         next_x = x + DIRECTIONS[symbol][0]
         next_y = y + DIRECTIONS[symbol][1]
+
         if len(board) <= next_y or len(board[y]) <= next_x:
             break
         while board[next_y][next_x] == "#":
@@ -50,8 +51,13 @@ def run(data: str) -> int:
             next_x = x + DIRECTIONS[symbol][0]
             next_y = y + DIRECTIONS[symbol][1]
         curr = [next_x, next_y]
+        if visited.get(f"{next_x}:{next_y}") == symbol:
+            loops += 1
+            break
 
-    return len(visited)
+    print("Loops:", loops)
+
+    return (len(visited), loops)
 
 
 DATA_FILE = "day_06.txt"
