@@ -2,7 +2,7 @@ from aoc.day_06 import run, parse_board, get_num_loops, add_blockage, TEST_DATA
 
 
 def test_basic():
-    assert run(TEST_DATA) == (41, 0)
+    assert run(TEST_DATA) == (41, False)
 
 
 def test_basic_top():
@@ -11,7 +11,7 @@ def test_basic_top():
 ...
 ...
 """
-    assert run(data) == (1, 0)
+    assert run(data) == (1, False)
 
 
 def test_basic_left():
@@ -20,7 +20,7 @@ def test_basic_left():
 .^#
 .#.
 """
-    assert run(data) == (3, 0)
+    assert run(data) == (3, False)
 
 
 def test_basic_right():
@@ -29,7 +29,7 @@ def test_basic_right():
 .^.
 ...
 """
-    assert run(data) == (2, 0)
+    assert run(data) == (2, False)
 
 
 def test_loop():
@@ -40,7 +40,7 @@ def test_loop():
 #....
 ...#.
 """
-    assert run(data) == (8, 1)
+    assert run(data) == (8, True)
 
 
 def test_add_blockage():
@@ -63,6 +63,26 @@ def test_num_loops():
 .^...
 #....
 ...#.
+"""
+    assert get_num_loops(parse_board(data)) == 1
+
+
+def test_num_loops_2():
+    data = """
+....
+#..#
+.^#.
+....
+"""
+    assert get_num_loops(parse_board(data)) == 1
+
+
+def test_num_loops_3():
+    data = """
+....
+..#.
+#^..
+.#..
 """
     assert get_num_loops(parse_board(data)) == 1
 

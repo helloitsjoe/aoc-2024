@@ -35,33 +35,33 @@ def get_visited_length(board: list[list[str]]):
     """
     symbol = "^"
     curr = [0, 0]
-    visited = {}
-    # TODO: Change this to is_loop
-    loops = 0
+    visited: dict[str, str] = {}
+    is_loop = False
 
     for y, row in enumerate(board):
         for x, val in enumerate(row):
             if val == symbol:
                 curr = [x, y]
+                break
 
     while 0 <= curr[1] < len(board) and 0 <= curr[0] < len(board[0]):
         x, y = curr[0], curr[1]
+        if visited.get(f"{x}:{y}") == symbol:
+            is_loop = True
+            break
         visited[f"{x}:{y}"] = symbol
         next_x = x + DIRECTIONS[symbol][0]
         next_y = y + DIRECTIONS[symbol][1]
 
-        if len(board) <= next_y or len(board[y]) <= next_x:
+        if next_y >= len(board) or next_x >= len(board[0]):
             break
         while board[next_y][next_x] == "#":
             symbol = get_next_symbol(symbol)
             next_x = x + DIRECTIONS[symbol][0]
             next_y = y + DIRECTIONS[symbol][1]
         curr = [next_x, next_y]
-        if visited.get(f"{next_x}:{next_y}") == symbol:
-            loops += 1
-            break
 
-    return (len(visited), loops)
+    return (len(visited), is_loop)
 
 
 def add_blockage(row: list[str], board: list[list[str]], x: int, y: int):
@@ -81,15 +81,12 @@ def get_num_loops(board: list[list[str]]):
     for y, row in enumerate(board):
         for x, val in enumerate(row):
             if val == ".":
-                # modified_board = add_blockage(row, board, x, y)
-                board[y][x] = "#"
-                _, is_loop = get_visited_length(board)
+                modified_board = add_blockage(row, board, x, y)
+                _, is_loop = get_visited_length(modified_board)
                 if is_loop:
                     print(x, y)
                     loops += 1
                     print("Loops:", loops)
-                board[y][x] = "."
-
     return loops
 
 
