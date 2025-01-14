@@ -1,3 +1,5 @@
+import os
+
 DIRECTIONS: dict[str, tuple[int, int]] = {
     "^": (0, -1),
     ">": (1, 0),
@@ -18,8 +20,13 @@ def get_next_symbol(symbol: str):
             return "^"
 
 
-def run(data: str) -> tuple[int, int]:
+def parse_board(data: str) -> list[list[str]]:
+    return [list(row) for row in list(data.strip().splitlines())]
+
+
+def get_visited_length(board: list[list[str]]):
     """
+    Counts the number of visited spaces before the guard leaves the board
     - Start at ^
     - Move in that direction until you reach a #
     - Count spaces (don't double count)
@@ -29,8 +36,7 @@ def run(data: str) -> tuple[int, int]:
     symbol = "^"
     curr = [0, 0]
     visited = {}
-    rows = list(data.strip().splitlines())
-    board = [list(row) for row in rows]
+    # TODO: Change this to is_loop
     loops = 0
 
     for y, row in enumerate(board):
@@ -38,7 +44,7 @@ def run(data: str) -> tuple[int, int]:
             if val == symbol:
                 curr = [x, y]
 
-    while 0 <= curr[1] < len(rows) and 0 <= curr[0] < len(rows[0]):
+    while 0 <= curr[1] < len(board) and 0 <= curr[0] < len(board[0]):
         x, y = curr[0], curr[1]
         visited[f"{x}:{y}"] = symbol
         next_x = x + DIRECTIONS[symbol][0]
@@ -55,9 +61,46 @@ def run(data: str) -> tuple[int, int]:
             loops += 1
             break
 
-    print("Loops:", loops)
-
     return (len(visited), loops)
+
+
+def add_blockage(row: list[str], board: list[list[str]], x: int, y: int):
+    new_x = x + 1
+    new_y = y + 1
+    new_row = row[:x] + ["#"] + row[new_x:]
+    new_board = board[:y] + [new_row] + board[new_y:]
+    return new_board
+
+
+def get_num_loops(board: list[list[str]]):
+    """
+    Iterate through the board adding a new block at each empty space,
+    and return the number of block positions that would result in a loop
+    """
+    loops = 0
+    for y, row in enumerate(board):
+        for x, val in enumerate(row):
+            if val == ".":
+                # modified_board = add_blockage(row, board, x, y)
+                board[y][x] = "#"
+                _, is_loop = get_visited_length(board)
+                if is_loop:
+                    print(x, y)
+                    loops += 1
+                    print("Loops:", loops)
+                board[y][x] = "."
+
+    return loops
+
+
+def run(data: str) -> int:
+    board = parse_board(data)
+
+    return (
+        get_num_loops(board)
+        if os.getenv("LOOP_CHECK")
+        else get_visited_length(board)
+    )
 
 
 DATA_FILE = "day_06.txt"

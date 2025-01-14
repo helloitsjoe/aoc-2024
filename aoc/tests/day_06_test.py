@@ -1,4 +1,4 @@
-from aoc.day_06 import run, TEST_DATA
+from aoc.day_06 import run, parse_board, get_num_loops, add_blockage, TEST_DATA
 
 
 def test_basic():
@@ -41,3 +41,31 @@ def test_loop():
 ...#.
 """
     assert run(data) == (8, 1)
+
+
+def test_add_blockage():
+    data = """
+..
+..
+"""
+    board = parse_board(data)
+    row = board[0]
+    new_board = add_blockage(row, board, 1, 0)
+    assert new_board == [[".", "#"], [".", "."]]
+    # Should make a copy
+    assert new_board is not board
+
+
+def test_num_loops():
+    data = """
+.#...
+.....
+.^...
+#....
+...#.
+"""
+    assert get_num_loops(parse_board(data)) == 1
+
+
+def test_num_loops_test_data():
+    assert get_num_loops(parse_board(TEST_DATA)) == 6
