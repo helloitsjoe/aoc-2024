@@ -20,7 +20,7 @@ def test_basic_left():
 .^#
 .#.
 """
-    assert run(data) == (3, False)
+    assert run(data) == (2, False)
 
 
 def test_basic_right():
@@ -77,12 +77,60 @@ def test_num_loops_2():
     assert get_num_loops(parse_board(data)) == 1
 
 
+# Bug fix
 def test_num_loops_3():
     data = """
 ....
 ..#.
+....
 #^..
 .#..
+"""
+    assert get_num_loops(parse_board(data)) == 1
+
+
+# Bug fix
+def test_num_loops_3b():
+    data = """
+.#....
+.^...#
+....#.
+"""
+    assert get_num_loops(parse_board(data)) == 1
+
+
+def test_num_loops_4():
+    data = """
+....
+.#..
+..#.
+....
+.^..
+.#..
+"""
+    assert get_num_loops(parse_board(data)) == 1
+
+
+def test_num_loops_5():
+    data = """
+....
+.#..
+....
+....
+#^..
+.#..
+"""
+    assert get_num_loops(parse_board(data)) == 1
+
+
+def test_num_loops_6():
+    data = """
+....
+.#..
+..#.
+....
+#^..
+....
 """
     assert get_num_loops(parse_board(data)) == 1
 

@@ -53,7 +53,12 @@ def get_visited_length(board: list[list[str]]):
         next_x = x + DIRECTIONS[symbol][0]
         next_y = y + DIRECTIONS[symbol][1]
 
-        if next_y >= len(board) or next_x >= len(board[0]):
+        if (
+            next_y >= len(board)
+            or next_x >= len(board[0])
+            or next_y < 0
+            or next_x < 0
+        ):
             break
         while board[next_y][next_x] == "#":
             symbol = get_next_symbol(symbol)
