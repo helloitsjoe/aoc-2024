@@ -1,5 +1,5 @@
 import os
-from aoc.day_06 import run, TEST_DATA, DATA_FILE
+from aoc.day_07 import run, TEST_DATA, DATA_FILE
 
 
 def main():
