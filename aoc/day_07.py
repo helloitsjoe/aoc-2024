@@ -1,11 +1,14 @@
+import os
+
+
 def get_all_outputs(
-    inputs: list[int], outputs: list[int] | None = None
+    inputs: list[int],
+    with_concat: bool = False,
 ) -> list[int]:
     """
     Return every combination of adding and multiplying the inputs
     """
-    if not outputs:
-        outputs = []
+    outputs = []
 
     if len(inputs) == 1:
         outputs.append(inputs[0])
@@ -14,9 +17,13 @@ def get_all_outputs(
     a, b, *rest = inputs
     first_sum = a + b
     first_product = a * b
+    first_concat = int(f"{a}{b}")
 
-    outputs_1 = get_all_outputs([first_sum, *rest], outputs)
-    outputs_2 = get_all_outputs([first_product, *rest], outputs)
+    outputs_1 = get_all_outputs([first_sum, *rest], with_concat)
+    outputs_2 = get_all_outputs([first_product, *rest], with_concat)
+    if with_concat:
+        outputs_3 = get_all_outputs([first_concat, *rest], with_concat)
+        return [*outputs_1, *outputs_2, *outputs_3]
 
     return [*outputs_1, *outputs_2]
 
@@ -42,7 +49,7 @@ def run(data: str):
     results: list[int] = []
     for line in parsed:
         val, *inputs = line
-        outputs = get_all_outputs(inputs)
+        outputs = get_all_outputs(inputs, os.getenv("PART_2") == "true")
         print(outputs)
         if val in outputs:
             results.append(val)
