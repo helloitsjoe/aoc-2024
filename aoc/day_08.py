@@ -1,43 +1,82 @@
-type Nodes = dict[str, list[tuple[int, int]]]
+type Nodes = dict[str, set[tuple[int, int]]]
 
 
 def get_nodes(grid: list[list[str]]) -> Nodes:
-    nodes: dict[str, list[tuple[int, int]]] = {}
+    nodes: dict[str, set[tuple[int, int]]] = {}
+    # all_nodes: set[tuple[int, int]] = set()
 
     for y, row in enumerate(grid):
         for x, point in enumerate(row):
             if point != ".":
                 if point not in nodes:
-                    nodes[point] = []
-                nodes[point].append((x, y))
+                    nodes[point] = set()
+                nodes[point].add((x, y))
+                # nodes["all"].add((x, y))
 
+    # nodes["all"] = list(all_nodes)
     return nodes
 
 
-def get_antinodes(nodes: Nodes) -> list[tuple[int, int]]:
+def is_on_grid(antinode: tuple[int, int], grid: list[list[str]]):
+    (x, y) = antinode
+    return 0 <= x < len(grid[0]) and 0 <= y < len(grid)
+
+
+def get_antinodes(
+    nodes: Nodes, grid: list[list[str]]
+) -> list[tuple[int, int]]:
     """
     For each pair of nodes, find antinodes on either side
     """
-    antinodes: list[tuple[int, int]] = []
-    print(nodes.keys())
-    for node1 in nodes.keys():
-        for node2 in nodes.values():
-            print(node1, node2)
-            if node1 == node2:
-                continue
+    antinodes: set[tuple[int, int]] = set()
 
-            (x1, y1) = node1
-            (x2, y2) = node2
+    for node_coords in nodes.values():
+        for i, node1 in enumerate(node_coords):
+            for j, node2 in enumerate(node_coords):
+                if j <= i:
+                    continue
 
-            distance_x = abs(x1 - x2)
-            distance_y = abs(y1 - y2)
+                (x1, y1) = node1
+                (x2, y2) = node2
 
-            print(distance_x)
-            print(distance_y)
-            # antinode1 =
-            # antinode2 =
+                distance_x = abs(x1 - x2)
+                distance_y = abs(y1 - y2)
 
-    return antinodes
+                # TODO: simplify
+                if x1 < x2 and y1 < y2:
+                    antinode1 = (
+                        min(x1, x2) - distance_x,
+                        min(y1, y2) - distance_y,
+                    )
+                    antinode2 = (
+                        max(x1, x2) + distance_x,
+                        max(y1, y2) + distance_y,
+                    )
+                elif x1 > x2 and y1 > y2:
+                    antinode1 = (
+                        max(x1, x2) + distance_x,
+                        max(y1, y2) + distance_y,
+                    )
+                    antinode2 = (
+                        min(x1, x2) - distance_x,
+                        min(y1, y2) - distance_y,
+                    )
+                else:
+                    antinode1 = (
+                        max(x1, x2) + distance_x,
+                        min(y1, y2) - distance_y,
+                    )
+                    antinode2 = (
+                        min(x1, x2) - distance_x,
+                        max(y1, y2) + distance_y,
+                    )
+
+                if is_on_grid(antinode1, grid):
+                    antinodes.add(antinode1)
+                if is_on_grid(antinode2, grid):
+                    antinodes.add(antinode2)
+
+    return list(antinodes)
 
 
 def parse_grid(grid: str) -> list[list[str]]:
@@ -53,9 +92,9 @@ def run(data: str):
     """
     grid = parse_grid(data)
     nodes = get_nodes(grid)
-    antinodes = get_antinodes(nodes)
+    antinodes = get_antinodes(nodes, grid)
 
-    return sum(antinodes)
+    return len(antinodes)
 
 
 DATA_FILE = "day_08.txt"
