@@ -44,18 +44,34 @@ def get_antinodes(
                 direction_y = 1 if y1 < y2 else -1
 
                 antinode1 = (
-                    x2 + distance_x * direction_x,
-                    y2 + distance_y * direction_y,
-                )
-                antinode2 = (
                     x1 - distance_x * direction_x,
                     y1 - distance_y * direction_y,
                 )
+                antinode2 = (
+                    x2 + distance_x * direction_x,
+                    y2 + distance_y * direction_y,
+                )
 
-                if is_on_grid(antinode1, grid):
+                if part_2:
+                    antinodes.add(node1)
+                    antinodes.add(node2)
+
+                while is_on_grid(antinode1, grid):
                     antinodes.add(antinode1)
-                if is_on_grid(antinode2, grid):
+                    if not part_2:
+                        break
+                    antinode1 = (
+                        antinode1[0] - distance_x * direction_x,
+                        antinode1[1] - distance_y * direction_y,
+                    )
+                while is_on_grid(antinode2, grid):
                     antinodes.add(antinode2)
+                    if not part_2:
+                        break
+                    antinode2 = (
+                        antinode2[0] + distance_x * direction_x,
+                        antinode2[1] + distance_y * direction_y,
+                    )
 
     return list(antinodes)
 
