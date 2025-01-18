@@ -1,9 +1,10 @@
+import os
+
 type Nodes = dict[str, set[tuple[int, int]]]
 
 
 def get_nodes(grid: list[list[str]]) -> Nodes:
     nodes: dict[str, set[tuple[int, int]]] = {}
-    # all_nodes: set[tuple[int, int]] = set()
 
     for y, row in enumerate(grid):
         for x, point in enumerate(row):
@@ -11,9 +12,6 @@ def get_nodes(grid: list[list[str]]) -> Nodes:
                 if point not in nodes:
                     nodes[point] = set()
                 nodes[point].add((x, y))
-                # nodes["all"].add((x, y))
-
-    # nodes["all"] = list(all_nodes)
     return nodes
 
 
@@ -23,7 +21,7 @@ def is_on_grid(antinode: tuple[int, int], grid: list[list[str]]):
 
 
 def get_antinodes(
-    nodes: Nodes, grid: list[list[str]]
+    nodes: Nodes, grid: list[list[str]], part_2: bool = False
 ) -> list[tuple[int, int]]:
     """
     For each pair of nodes, find antinodes on either side
@@ -42,34 +40,17 @@ def get_antinodes(
                 distance_x = abs(x1 - x2)
                 distance_y = abs(y1 - y2)
 
-                # TODO: simplify
-                if x1 < x2 and y1 < y2:
-                    antinode1 = (
-                        min(x1, x2) - distance_x,
-                        min(y1, y2) - distance_y,
-                    )
-                    antinode2 = (
-                        max(x1, x2) + distance_x,
-                        max(y1, y2) + distance_y,
-                    )
-                elif x1 > x2 and y1 > y2:
-                    antinode1 = (
-                        max(x1, x2) + distance_x,
-                        max(y1, y2) + distance_y,
-                    )
-                    antinode2 = (
-                        min(x1, x2) - distance_x,
-                        min(y1, y2) - distance_y,
-                    )
-                else:
-                    antinode1 = (
-                        max(x1, x2) + distance_x,
-                        min(y1, y2) - distance_y,
-                    )
-                    antinode2 = (
-                        min(x1, x2) - distance_x,
-                        max(y1, y2) + distance_y,
-                    )
+                direction_x = 1 if x1 < x2 else -1
+                direction_y = 1 if y1 < y2 else -1
+
+                antinode1 = (
+                    x2 + distance_x * direction_x,
+                    y2 + distance_y * direction_y,
+                )
+                antinode2 = (
+                    x1 - distance_x * direction_x,
+                    y1 - distance_y * direction_y,
+                )
 
                 if is_on_grid(antinode1, grid):
                     antinodes.add(antinode1)
@@ -92,7 +73,7 @@ def run(data: str):
     """
     grid = parse_grid(data)
     nodes = get_nodes(grid)
-    antinodes = get_antinodes(nodes, grid)
+    antinodes = get_antinodes(nodes, grid, os.getenv("PART_2") == "true")
 
     return len(antinodes)
 

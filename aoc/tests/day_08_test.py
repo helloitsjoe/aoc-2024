@@ -120,3 +120,25 @@ def test_test_data():
         (9, 4),
     ]
     assert len(antinodes) == 14
+
+
+def test_test_data_part_2():
+    grid = parse_grid(TEST_DATA)
+    antinodes = get_antinodes(get_nodes(grid), grid, True)
+    assert antinodes == [
+        (0, 7),
+        (6, 0),
+        (10, 11),
+        (7, 7),
+        (6, 5),
+        (1, 5),
+        (3, 1),
+        (11, 0),
+        (4, 2),
+        (2, 3),
+        (10, 10),
+        (3, 6),
+        (10, 2),
+        (9, 4),
+    ]
+    assert len(antinodes) == 14
