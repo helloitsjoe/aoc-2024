@@ -21,6 +21,16 @@ def test_multiple_paths_same_peak():
     assert run(data) == 1
 
 
+def test_multiple_paths_same_peak_part_2():
+    data = """
+0123
+1514
+2345
+9876
+"""
+    assert run(data, True) == 2
+
+
 def test_multiple_peaks():
     data = """
 9990999
@@ -36,3 +46,7 @@ def test_multiple_peaks():
 
 def test_run():
     assert run(TEST_DATA) == 36
+
+
+def test_run_part_2():
+    assert run(TEST_DATA, True) == 81
