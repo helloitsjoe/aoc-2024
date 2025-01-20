@@ -94,7 +94,7 @@ def get_full_order(orders: list[list[int]]) -> list[int]:
     return [first, *get_full_order(new_orders), last]
 
 
-def run(data: str, should_be_correct: bool | None = False):
+def run(data: str, part_2: bool | None = False):
     """
     Data has two sections: ordering rules and ordered pages.
     Ordering rules specify which pages should come before others
@@ -120,7 +120,7 @@ def run(data: str, should_be_correct: bool | None = False):
             full_order = get_full_order(relevant_orders)
             incorrect_sum += get_middle_page_incorrect(pages, full_order)
 
-    return correct_sum if should_be_correct else incorrect_sum
+    return correct_sum if part_2 else incorrect_sum
 
 
 TEST_DATA = """47|53

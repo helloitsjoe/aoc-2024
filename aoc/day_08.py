@@ -1,5 +1,3 @@
-import os
-
 type Nodes = dict[str, set[tuple[int, int]]]
 
 
@@ -80,7 +78,7 @@ def parse_grid(grid: str) -> list[list[str]]:
     return [list(line) for line in grid.strip().splitlines()]
 
 
-def run(data: str):
+def run(data: str, part_2: bool = False):
     """
     find antinodes: points in-line with two nodes of the same letter that are
     double the distance between the two nodes.
@@ -89,7 +87,7 @@ def run(data: str):
     """
     grid = parse_grid(data)
     nodes = get_nodes(grid)
-    antinodes = get_antinodes(nodes, grid, os.getenv("PART_2") == "true")
+    antinodes = get_antinodes(nodes, grid, part_2)
 
     return len(antinodes)
 

@@ -1,6 +1,3 @@
-import os
-
-
 def get_all_outputs(
     inputs: list[int],
     with_concat: bool = False,
@@ -37,7 +34,7 @@ def parse_input(data: str):
     return [parse_line(line) for line in data.strip().splitlines()]
 
 
-def run(data: str):
+def run(data: str, part_2: bool = False):
     """
     Data includes values on the left and numbers which can potentially produce
     the value when combined with + or *. Expressions are evaluated L-to-R,
@@ -49,7 +46,7 @@ def run(data: str):
     results: list[int] = []
     for line in parsed:
         val, *inputs = line
-        outputs = get_all_outputs(inputs, os.getenv("PART_2") == "true")
+        outputs = get_all_outputs(inputs, part_2)
         print(outputs)
         if val in outputs:
             results.append(val)

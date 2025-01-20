@@ -139,7 +139,7 @@ def get_checksum(blocks: list[int]) -> int:
     )
 
 
-def run(data: str, part_2: bool):
+def run(data: str, part_2: bool = False):
     blocks = to_blocks(data.strip())
     compacted = (
         compact_file_blocks(blocks) if part_2 else compact_blocks(blocks)

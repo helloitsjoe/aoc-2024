@@ -1,5 +1,3 @@
-import os
-
 DIRECTIONS: dict[str, tuple[int, int]] = {
     "^": (0, -1),
     ">": (1, 0),
@@ -95,14 +93,10 @@ def get_num_loops(board: list[list[str]]):
     return loops
 
 
-def run(data: str) -> int:
+def run(data: str, part_2: bool = False) -> int:
     board = parse_board(data)
 
-    return (
-        get_num_loops(board)
-        if os.getenv("LOOP_CHECK")
-        else get_visited_length(board)
-    )
+    return get_num_loops(board) if part_2 else get_visited_length(board)
 
 
 DATA_FILE = "day_06.txt"

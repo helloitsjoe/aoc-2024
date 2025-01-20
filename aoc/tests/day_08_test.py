@@ -1,4 +1,4 @@
-from aoc.day_08 import run, get_nodes, get_antinodes, parse_grid, TEST_DATA
+from aoc.day_08 import get_nodes, get_antinodes, parse_grid, TEST_DATA
 
 
 def test_basic_grid():

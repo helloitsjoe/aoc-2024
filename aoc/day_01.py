@@ -1,5 +1,7 @@
 import re
 
+DATA_FILE = "day_01.txt"
+
 
 def part_1_get_sum(left: list[int], right: list[int]) -> int:
     return sum(abs(left_val - right[i]) for (i, left_val) in enumerate(left))
@@ -28,13 +30,17 @@ def _split_lists(lists: str) -> tuple[list[int], list[int]]:
     return (sorted(left), sorted(right))
 
 
-def run(filepath: str):
+def run(filepath: str, part_2: bool = False):
     with open(filepath, encoding="utf8") as file:
         left, right = _split_lists(file.read())
-        return part_2_get_similarity(left, right)
+        return (
+            part_2_get_similarity(left, right)
+            if part_2
+            else part_1_get_sum(left, right)
+        )
 
 
-TEST_INPUT = """3   4
+TEST_DATA = """3   4
 4   3
 2   5
 1   3

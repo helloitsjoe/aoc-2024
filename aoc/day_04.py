@@ -91,10 +91,13 @@ def count_cross(data: str):
     return total
 
 
-def run(data: str):
+def run(data: str, part_2: bool = False):
     """
     Prints the number of instances of XMAS in the input
     """
+    if part_2:
+        return count_cross(data)
+
     total = sum(
         (
             count(join_horizontal(data)),
@@ -104,7 +107,6 @@ def run(data: str):
         )
     )
     return total
-    # return count_cross(data)
 
 
 TEST_DATA = """

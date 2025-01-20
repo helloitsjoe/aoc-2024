@@ -1,12 +1,12 @@
 import os
-from aoc.day_09 import run, TEST_DATA, DATA_FILE
+from aoc.day_10 import run, TEST_DATA, DATA_FILE
 
 
 def main():
     filepath = os.path.join(os.getcwd(), "aoc", DATA_FILE)
     with open(filepath, encoding="utf8") as file:
         data = TEST_DATA if os.getenv("TEST") else file.read()
-        part_2 = os.getenv("TEST") == "true"
+        part_2 = os.getenv("PART_2") == "true"
         output = run(data, part_2)
         print(output)
 

@@ -48,3 +48,7 @@ def test_count_cross():
 
 def test_run():
     assert run(TEST_DATA) == 18
+
+
+def test_run_part_2():
+    assert run(TEST_DATA, True) == 9
