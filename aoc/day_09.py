@@ -1,4 +1,3 @@
-import os
 from collections import namedtuple
 
 DATA_FILE = "day_09.txt"
@@ -6,6 +5,7 @@ DATA_FILE = "day_09.txt"
 TEST_DATA = "2333133121414131402"
 
 FileBlock = namedtuple("FileBlock", ["idx", "len", "id"])
+OpenBlock = namedtuple("OpenBlock", ["idx", "cap"])
 
 
 def to_blocks(data: str) -> list[int]:
@@ -41,8 +41,7 @@ def compact_blocks(data: list[int]) -> list[int]:
     return data_list
 
 
-# TODO: make this clearer
-def create_slot_map(data_list: list[int]) -> list[tuple[int, int]]:
+def create_slot_map(data_list: list[int]) -> list[OpenBlock]:
     slot_map = []
     start_idx = -1
     cap = 0
@@ -53,12 +52,12 @@ def create_slot_map(data_list: list[int]) -> list[tuple[int, int]]:
             cap += 1
         else:
             if start_idx != -1:
-                slot_map.append((start_idx, cap))
+                slot_map.append(OpenBlock(start_idx, cap))
             start_idx = -1
             cap = 0
 
     if start_idx != -1:
-        slot_map.append((start_idx, cap))
+        slot_map.append(OpenBlock(start_idx, cap))
 
     return slot_map
 
@@ -94,33 +93,19 @@ def create_block_map(data_list: list[int]) -> list[FileBlock]:
 
 def move_file_blocks(
     data_list: list[int],
-    slot_map: list[tuple[int, int]],
+    slot_map: list[OpenBlock],
     block_map: list[FileBlock],
 ) -> list[int]:
     # Iterate once over data_list, trying to fit each into first empty slot
-
-    # Iterate backwards through data_list, looking only at full blocks
     for block in block_map[::-1]:
         for i, ea in enumerate(slot_map):
             idx, cap = ea
             if block.idx < idx:
                 break
-            if block.len == cap:
-                # fill slot and update idx, cap, and remove from data_list
-                slot_map = slot_map[0:i] + slot_map[i + 1 :]
-
-                data_list = (
-                    data_list[:idx]
-                    + [block.id for _ in range(block.len)]
-                    + data_list[idx + block.len : block.idx]
-                    + [-1 for _ in range(block.len)]
-                    + data_list[block.idx + block.len :]
-                )
-                break
-            if block.len < cap:
+            if block.len <= cap:
                 print("id", block.id)
                 # remove len from cap
-                slot_map[i] = (idx + block.len, cap - block.len)
+                slot_map[i] = OpenBlock(idx + block.len, cap - block.len)
 
                 # add block to beginning, remove from end
                 data_list = (
@@ -135,7 +120,7 @@ def move_file_blocks(
     return data_list
 
 
-def compact_file_blocks(data: list[int], data_map: str) -> list[int]:
+def compact_file_blocks(data: list[int]) -> list[int]:
     data_list = data[:]
 
     # Map of empty slots (index of data_list, capacity)
@@ -154,9 +139,9 @@ def get_checksum(blocks: list[int]) -> int:
     )
 
 
-def run(data: str):
-    data_map = data.strip()
-    part_2 = os.getenv("PART_2") == "true"
-    if part_2:
-        return get_checksum(compact_file_blocks(to_blocks(data_map), data_map))
-    return get_checksum(compact_blocks(to_blocks(data.strip())))
+def run(data: str, part_2: bool):
+    blocks = to_blocks(data.strip())
+    compacted = (
+        compact_file_blocks(blocks) if part_2 else compact_blocks(blocks)
+    )
+    return get_checksum(compacted)

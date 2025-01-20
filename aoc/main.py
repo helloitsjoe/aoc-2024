@@ -6,7 +6,8 @@ def main():
     filepath = os.path.join(os.getcwd(), "aoc", DATA_FILE)
     with open(filepath, encoding="utf8") as file:
         data = TEST_DATA if os.getenv("TEST") else file.read()
-        output = run(data)
+        part_2 = os.getenv("TEST") == "true"
+        output = run(data, part_2)
         print(output)
 
 
