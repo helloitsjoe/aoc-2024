@@ -20,6 +20,14 @@ def _replace_dot(ea: str):
     return int(ea.replace(".", "-1"))
 
 
+def _to_str(data: list[int]) -> str:
+    return "".join(list(map(str, data))).replace("-1", ".")
+
+
+def test_to_str():
+    assert _to_str([1, -1, 3]) == "1.3"
+
+
 def test_to_blocks_basic():
     data = "12345"
     assert to_blocks(data) == _to_ints("0..111....22222")
@@ -78,32 +86,63 @@ def test_move_file_blocks_partial():
     slot_map = create_slot_map(data)
     block_map = create_block_map(data)
     assert move_file_blocks(data, slot_map, block_map) == _to_ints(
-        "03..1..222..."
+        "031....222..."
     )
 
 
-# def test_move_file_blocks_2():
-#     orig_data = "111232133"
-#     data = to_blocks(orig_data)
-#     assert data == [0, -1, 1, -1, -1, 2, 2, 2, -1, -1, 3, -1, -1, -1, 4, 4, 4]
-#     slot_map = create_slot_map(data)
-#     block_map = create_block_map(data)
-#     assert move_file_blocks(data, slot_map, block_map) == _to_ints(
-#         "031..222...444..."
-#     )
+def test_move_file_blocks_2():
+    orig_data = "111232133"
+    data = to_blocks(orig_data)
+    assert data == [0, -1, 1, -1, -1, 2, 2, 2, -1, -1, 3, -1, -1, -1, 4, 4, 4]
+    slot_map = create_slot_map(data)
+    block_map = create_block_map(data)
+    assert move_file_blocks(data, slot_map, block_map) == _to_ints(
+        "031..222...444..."
+    )
 
 
-# def test_compact_file_blocks_basic():
-#     orig_data = "1112321"
-#     data = to_blocks(orig_data)
-#     assert data == [0, -1, 1, -1, -1, 2, 2, 2, -1, -1, 3]
-#     assert compact_file_blocks(data, orig_data) == _to_ints("031..222..")
+def test_compact_file_blocks_basic():
+    orig_data = "1112321"
+    data = to_blocks(orig_data)
+    assert data == [0, -1, 1, -1, -1, 2, 2, 2, -1, -1, 3]
+    compacted = compact_file_blocks(data, orig_data)
+    assert _to_str(compacted) == "031..222..."
 
 
-# def test_compact_file_blocks_test():
-#     assert compact_file_blocks(_to_ints(TEST_DATA), TEST_DATA) == _to_ints(
-#         "00992111777.44.333....5555.6666.....8888.."
-#     )
+def test_slot_block_map_test_data():
+    data = to_blocks(TEST_DATA)
+    assert _to_str(data) == "00...111...2...333.44.5555.6666.777.888899"
+    slot_map = create_slot_map(data)
+    assert slot_map == [
+        (2, 3),
+        (8, 3),
+        (12, 3),
+        (18, 1),
+        (21, 1),
+        (26, 1),
+        (31, 1),
+        (35, 1),
+    ]
+    block_map = create_block_map(data)
+    assert block_map == [
+        FileBlock(idx=0, len=2, id=0),
+        FileBlock(idx=5, len=3, id=1),
+        FileBlock(idx=11, len=1, id=2),
+        FileBlock(idx=15, len=3, id=3),
+        FileBlock(idx=19, len=2, id=4),
+        FileBlock(idx=22, len=4, id=5),
+        FileBlock(idx=27, len=4, id=6),
+        FileBlock(idx=32, len=3, id=7),
+        FileBlock(idx=36, len=4, id=8),
+        FileBlock(idx=40, len=2, id=9),
+    ]
+
+
+def test_compact_file_blocks_test():
+    data = to_blocks(TEST_DATA)
+    assert _to_str(data) == "00...111...2...333.44.5555.6666.777.888899"
+    compacted = compact_file_blocks(data, TEST_DATA)
+    assert _to_str(compacted) == "00992111777.44.333....5555.6666.....8888.."
 
 
 def test_checksum():

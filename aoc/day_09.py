@@ -67,24 +67,27 @@ def create_block_map(data_list: list[int]) -> list[FileBlock]:
     block_map = []
     start_idx = -1
     seen_block = -1
-    cap = 0
+    length = 0
 
     for i, block in enumerate(data_list):
         if block != -1:
+            if seen_block not in (-1, block):
+                block_map.append(FileBlock(start_idx, length, seen_block))
+                start_idx = -1
+                length = 0
             start_idx = i if start_idx == -1 else start_idx
             seen_block = block
-            print(seen_block)
-            cap += 1
+            length += 1
         else:
             if start_idx != -1:
-                block_map.append(FileBlock(start_idx, cap, seen_block))
+                block_map.append(FileBlock(start_idx, length, seen_block))
             start_idx = -1
-            cap = 0
+            length = 0
             seen_block = -1
 
     # Add any blocks at the end
     if start_idx != -1 and seen_block != -1:
-        block_map.append(FileBlock(start_idx, cap, seen_block))
+        block_map.append(FileBlock(start_idx, length, seen_block))
 
     return block_map
 
@@ -98,41 +101,35 @@ def move_file_blocks(
 
     # Iterate backwards through data_list, looking only at full blocks
     for block in block_map[::-1]:
-        print("block", block)
         for i, ea in enumerate(slot_map):
             idx, cap = ea
-            print(block.len, cap)
+            if block.idx < idx:
+                break
             if block.len == cap:
                 # fill slot and update idx, cap, and remove from data_list
-                print("slot_map before", slot_map)
                 slot_map = slot_map[0:i] + slot_map[i + 1 :]
-                print("slot_map after", slot_map)
 
-                print("data_list before", data_list)
                 data_list = (
                     data_list[:idx]
                     + [block.id for _ in range(block.len)]
-                    + data_list[i + block.len + 1 : block.idx]
+                    + data_list[idx + block.len : block.idx]
                     + [-1 for _ in range(block.len)]
                     + data_list[block.idx + block.len :]
                 )
-                print("data_list after", data_list)
-            elif block.len < cap:
+                break
+            if block.len < cap:
+                print("id", block.id)
                 # remove len from cap
-                # print("slot_map before", slot_map)
-                # slot_map[i] = (i, cap - block.len)
-                # print("slot_map after", slot_map)
+                slot_map[i] = (idx + block.len, cap - block.len)
 
-                # # add block to beginning, remove from end
-                # print("data_list before", data_list)
-                # data_list = (
-                #     data_list[:idx]
-                #     + [block.id for _ in range(block.len)]
-                #     + data_list[i + block.len + 1 : block.idx]
-                #     + [-1 for _ in range(block.len)]
-                #     + data_list[block.idx + block.len :]
-                # )
-                # print("data_list after", data_list)
+                # add block to beginning, remove from end
+                data_list = (
+                    data_list[:idx]
+                    + [block.id for _ in range(block.len)]
+                    + data_list[idx + block.len : block.idx]
+                    + [-1 for _ in range(block.len)]
+                    + data_list[block.idx + block.len :]
+                )
                 break
 
     return data_list
