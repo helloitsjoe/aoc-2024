@@ -1,3 +1,6 @@
+import math
+import time
+
 DATA_FILE = "day_11.txt"
 
 # Initial arrangement:
@@ -24,28 +27,47 @@ DATA_FILE = "day_11.txt"
 TEST_DATA = "125 17"
 
 
-def process_stones(stones: list[str]) -> list[str]:
+def process_stones(
+    stones: list[int], memo: dict[int, tuple[int, int]] = {}
+) -> list[int]:
     new_stones = []
 
     for stone in stones:
-        if stone == "0":
-            new_stones.append("1")
-        elif len(stone) % 2 == 0:
-            half = int(len(stone) / 2)
-            new_stones.extend([str(int(stone[:half])), str(int(stone[half:]))])
+        if stone == 0:
+            new_stones.append(1)
         else:
-            new_stones.append(str(int(stone) * 2024))
+            log_10 = math.floor(math.log10(stone)) + 1
+            if log_10 % 2 == 0:
+                if stone in memo:
+                    new_stones.extend(memo[stone])
+                else:
+                    dividend = 10 ** (log_10 / 2)
+                    left = math.floor(stone / dividend)
+                    sub = int(left * dividend)
+                    right = stone - sub
+                    memo[stone] = (left, right)
+                    new_stones.extend((left, right))
+            else:
+                new_stones.append(stone * 2024)
 
     return new_stones
 
 
-def blink(stones: list[str], times: int) -> list[str]:
-    if times == 0:
-        return stones
+def blink(stones: list[int], times: int) -> list[int]:
+    # if times == 0:
+    #     return stones
 
-    new_stones = process_stones(stones)
+    # new_stones = process_stones(stones)
 
-    return blink(new_stones, times - 1)
+    # return blink(new_stones, times - 1)
+
+    new_stones = stones[:]
+    memo: dict[int, tuple[int, int]] = {}
+    for _ in range(times):
+        new_stones = process_stones(new_stones, memo)
+        # print(new_stones)
+
+    return new_stones
 
 
 def run(data: str, part_2: bool = False):
@@ -66,6 +88,9 @@ def run(data: str, part_2: bool = False):
 
     Return number of stones after blinking 25 times
     """
-    print(part_2)
-    stones = data.strip().split(" ")
-    return len(blink(stones, 25))
+    start = time.time()
+    stones = list(map(int, data.strip().split(" ")))
+    blinks = 75 if part_2 else 25
+    length = len(blink(stones, blinks))
+    print(time.time() - start)
+    return length
