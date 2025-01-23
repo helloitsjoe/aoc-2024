@@ -2,34 +2,36 @@ from aoc.day_11 import run, blink, process_stones, TEST_DATA
 
 
 def test_process_stones_basic():
-    assert process_stones([0, 11, 1], {}) == [1, 1, 1, 2024]
+    stones = {0: 1, 11: 1, 1: 1}
+    assert process_stones(stones) == {1: 3, 2024: 1}
 
 
 def test_process_stones_extra_zeros():
-    assert process_stones([0, 1000, 1], {}) == [1, 10, 0, 2024]
+    stones = {0: 1, 1: 1, 1000: 1}
+    assert process_stones(stones) == {1: 1, 10: 1, 0: 1, 2024: 1}
 
 
 def test_process_example():
-    assert process_stones([0, 1, 10, 99, 999], {}) == [
-        1,
-        2024,
-        1,
-        0,
-        9,
-        9,
-        2021976,
-    ]
-
-
-def test_memo():
-    memo = {}
-    assert process_stones([0, 1000, 1], memo) == [1, 10, 0, 2024]
-    assert memo == {1000: (10, 0)}
+    stones = {
+        0: 1,
+        1: 1,
+        10: 1,
+        99: 1,
+        999: 1,
+    }
+    assert process_stones(stones) == {
+        1: 2,
+        2024: 1,
+        0: 1,
+        9: 2,
+        2021976: 1,
+    }
 
 
 def test_blink():
-    assert blink([0, 1000, 1], 1) == [1, 10, 0, 2024]
-    assert blink([0, 1000, 1], 2) == [2024, 1, 0, 1, 20, 24]
+    stones = {0: 1, 1: 1, 1000: 1}
+    assert blink(stones, 1) == {1: 1, 10: 1, 0: 1, 2024: 1}
+    assert blink(stones, 2) == {1: 2, 0: 1, 20: 1, 24: 1, 2024: 1}
 
 
 def test_run():

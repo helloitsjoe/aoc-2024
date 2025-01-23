@@ -27,47 +27,41 @@ DATA_FILE = "day_11.txt"
 TEST_DATA = "125 17"
 
 
-def process_stones(
-    stones: list[int], memo: dict[int, tuple[int, int]] = {}
-) -> list[int]:
-    new_stones = []
+def process_stones(initial_stones: dict[int, int]) -> dict[int, int]:
+    stones: dict[int, int] = {}
 
-    for stone in stones:
+    for stone, count in initial_stones.items():
         if stone == 0:
-            new_stones.append(1)
+            stones[1] = count if 1 not in stones else stones[1] + count
         else:
-            log_10 = math.floor(math.log10(stone)) + 1
-            if log_10 % 2 == 0:
-                if stone in memo:
-                    new_stones.extend(memo[stone])
-                else:
-                    dividend = 10 ** (log_10 / 2)
-                    left = math.floor(stone / dividend)
-                    sub = int(left * dividend)
-                    right = stone - sub
-                    memo[stone] = (left, right)
-                    new_stones.extend((left, right))
+            str_stone = str(stone)
+            length = len(str_stone)
+            if length % 2 == 0:
+                half = length // 2
+                left = int(str_stone[:half])
+                right = int(str_stone[half:])
+                stones[left] = (
+                    count if left not in stones else stones[left] + count
+                )
+                stones[right] = (
+                    count if right not in stones else stones[right] + count
+                )
             else:
-                new_stones.append(stone * 2024)
+                new = stone * 2024
+                stones[new] = (
+                    count if new not in stones else stones[new] + count
+                )
 
-    return new_stones
+    return stones
 
 
-def blink(stones: list[int], times: int) -> list[int]:
-    # if times == 0:
-    #     return stones
+def blink(stones: dict[int, int], times: int) -> dict[int, int]:
+    if times == 0:
+        return stones
 
-    # new_stones = process_stones(stones)
+    new_stones = process_stones(stones)
 
-    # return blink(new_stones, times - 1)
-
-    new_stones = stones[:]
-    memo: dict[int, tuple[int, int]] = {}
-    for _ in range(times):
-        new_stones = process_stones(new_stones, memo)
-        # print(new_stones)
-
-    return new_stones
+    return blink(new_stones, times - 1)
 
 
 def run(data: str, part_2: bool = False):
@@ -90,7 +84,13 @@ def run(data: str, part_2: bool = False):
     """
     start = time.time()
     stones = list(map(int, data.strip().split(" ")))
+    stone_map: dict[int, int] = {}
+    for stone in stones:
+        stone_map[stone] = (
+            1 if stone not in stone_map else stone_map[stone] + 1
+        )
+    print(stone_map)
     blinks = 75 if part_2 else 25
-    length = len(blink(stones, blinks))
+    map_after_blinks = blink(stone_map, blinks)
     print(time.time() - start)
-    return length
+    return sum((map_after_blinks.values()))
