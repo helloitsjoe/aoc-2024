@@ -1,4 +1,3 @@
-import math
 import time
 
 DATA_FILE = "day_11.txt"
@@ -32,7 +31,7 @@ def process_stones(initial_stones: dict[int, int]) -> dict[int, int]:
 
     for stone, count in initial_stones.items():
         if stone == 0:
-            stones[1] = count if 1 not in stones else stones[1] + count
+            stones[1] = stones.get(1, 0) + count
         else:
             str_stone = str(stone)
             length = len(str_stone)
@@ -40,17 +39,11 @@ def process_stones(initial_stones: dict[int, int]) -> dict[int, int]:
                 half = length // 2
                 left = int(str_stone[:half])
                 right = int(str_stone[half:])
-                stones[left] = (
-                    count if left not in stones else stones[left] + count
-                )
-                stones[right] = (
-                    count if right not in stones else stones[right] + count
-                )
+                stones[left] = stones.get(left, 0) + count
+                stones[right] = stones.get(right, 0) + count
             else:
                 new = stone * 2024
-                stones[new] = (
-                    count if new not in stones else stones[new] + count
-                )
+                stones[new] = stones.get(new, 0) + count
 
     return stones
 
@@ -78,7 +71,7 @@ def run(data: str, part_2: bool = False):
     - If none of the other rules apply, the stone is replaced by a new stone;
       the old stone's number multiplied by 2024 is engraved on the new stone.
 
-    Order is preserved
+    Order is preserved (It doesn't matter!)
 
     Return number of stones after blinking 25 times
     """
@@ -86,9 +79,7 @@ def run(data: str, part_2: bool = False):
     stones = list(map(int, data.strip().split(" ")))
     stone_map: dict[int, int] = {}
     for stone in stones:
-        stone_map[stone] = (
-            1 if stone not in stone_map else stone_map[stone] + 1
-        )
+        stone_map[stone] = stone_map.get(stone, 0) + 1
     print(stone_map)
     blinks = 75 if part_2 else 25
     map_after_blinks = blink(stone_map, blinks)
