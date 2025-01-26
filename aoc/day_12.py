@@ -10,19 +10,6 @@ EEEC
 """
 
 
-# def get_area_and_perimeter(
-#     land: list[list[str]],
-#     letter: str,
-#     areas: dict[str, int],
-#     perimeters: dict[str, int],
-# ):
-#     for y, row in enumerate(land):
-#         for x, sq in enumerate(row):
-
-
-#     return area, perimeter
-
-
 DIRS = {
     "N": (0, -1),
     "E": (1, 0),
@@ -49,22 +36,33 @@ def create_land(data: str):
 
 
 def spread_from(
-    x: int, y: int, land: list[list[Square]]
+    initial_x: int, initial_y: int, land: list[list[Square]]
 ) -> tuple[str, int, int]:
     area = 0
     perimeter = 0
-    curr = land[y][x]
-    curr_x = x
-    curr_y = y
-    curr_letter = curr.val
-    to_check = [(curr, x, y)]
+    curr = land[initial_y][initial_x]
 
-    # TODO: Move to each next square... How to determine when there are no more
-    # squares in the current plot?
+    print("checking", curr.val)
+
+    to_check = [(curr, initial_x, initial_y)]
+
     while to_check:
+        (curr, x, y) = to_check.pop()
+
+        if not curr.visited:
+            # print("adding", curr.val, curr_x, curr_y)
+            area += 1
+
+            perimeter += 4
+            if 0 <= (y - 1) < len(land) and land[y - 1][x].val == curr.val:
+                perimeter -= 2
+            if 0 <= (x - 1) < len(land[y]) and land[y][x - 1].val == curr.val:
+                perimeter -= 2
+        curr.visited = True
+
         for dir_x, dir_y in DIRS.values():
-            next_x = curr_x + dir_x
-            next_y = curr_y + dir_y
+            next_x = x + dir_x
+            next_y = y + dir_y
 
             if 0 <= next_y < len(land) and 0 <= next_x < len(land[y]):
                 next_sq = land[next_y][next_x]
@@ -74,21 +72,10 @@ def spread_from(
                 print("appending", next_sq, next_x, next_y)
                 to_check.append((next_sq, next_x, next_y))
 
-                # Add to area
-                area += 1
-
-                # Add to perimeter
-                #     Check each side
-                #     Subtract 2 if same letter (should skip if visited?)
-                # perimeter += 4
-
-        # Mark as visited
-        curr.visited = True
-        # Move on
-        (curr, curr_x, curr_y) = to_check.pop()
+        print(to_check)
 
     print(area, perimeter)
-    return curr_letter, area, perimeter
+    return land[y][x].val, area, perimeter
 
 
 def get_plots(land: Land):
@@ -124,7 +111,7 @@ def combine_area_and_perimeter(
     plots: list[Plot],
 ):
     total = 0
-    for letter, area, perimeter in plots:
+    for _, area, perimeter in plots:
         total += area * perimeter
 
     return total
