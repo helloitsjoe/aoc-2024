@@ -73,6 +73,7 @@ def spread_from(
             if next_sq.visited or next_sq.val != curr.val:
                 continue
 
+            # We made it
             to_check.append((next_sq, next_x, next_y))
 
     return land[y][x].val, area, perimeter
