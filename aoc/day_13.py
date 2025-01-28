@@ -22,11 +22,12 @@ Prize: X=18641, Y=10279
 
 type ButtonCoords = tuple[int, int]
 type PrizeCoords = tuple[int, int]
+type Machine = tuple[ButtonCoords, ButtonCoords, PrizeCoords]
 
 
 def parse_machine(
     machine: str,
-) -> tuple[ButtonCoords, ButtonCoords, PrizeCoords]:
+) -> Machine:
     a, b, prize = machine.splitlines()
 
     a_match = re.match(r"Button A: X\+(\d+), Y\+(\d+)", a)
@@ -43,10 +44,26 @@ def parse_machine(
     return (int(ax), int(ay)), (int(bx), int(by)), (int(prize_x), int(prize_y))
 
 
-def run(data: str, part_2: bool):
+def get_num_tokens(machine: Machine) -> tuple[int, int]:
+    (ax, ay), (bx, by), (prize_x, prize_y) = machine
+
+    tokens = []
+
+    for i in range(100):
+        for j in range(100):
+            if ax * i + bx * j == prize_x and ay * i + by * j == prize_y:
+                tokens.append((i, j))
+
+    minimum = min(tokens) if tokens else (0, 0)
+
+    return minimum
+
+
+def run(data: str, part_2: bool = False):
     """
     You wonder: what is the smallest number of tokens you would have to spend to win as many prizes as possible?
     """
     machines = data.strip().split("\n\n")
     parsed = list(map(parse_machine, machines))
-    return parsed
+    num_tokens = list(map(get_num_tokens, parsed))
+    return sum((a * 3 + b * 1 for a, b in num_tokens))
