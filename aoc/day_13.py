@@ -1,4 +1,5 @@
 import re
+from typing import Callable
 
 DATA_FILE = "day_13.txt"
 
@@ -44,19 +45,47 @@ def parse_machine(
     return (int(ax), int(ay)), (int(bx), int(by)), (int(prize_x), int(prize_y))
 
 
-def get_num_tokens(machine: Machine) -> tuple[int, int]:
-    (ax, ay), (bx, by), (prize_x, prize_y) = machine
+def get_num_tokens(part_2: bool) -> Callable:
+    start = (10**10) if part_2 else 1
+    end = (10**11) if part_2 else 100
 
-    tokens = []
+    def get_num_tokens_inner(machine: Machine) -> tuple[int, int]:
+        print("here")
+        print("start", start)
+        print("end", end)
+        (ax, ay), (bx, by), (prize_x, prize_y) = machine
 
-    for i in range(100):
-        for j in range(100):
-            if ax * i + bx * j == prize_x and ay * i + by * j == prize_y:
-                tokens.append((i, j))
+        tokens: list[tuple[int, int]] = []
+        tokens_a: set[tuple[int, int]] = set()
+        tokens_b: set[tuple[int, int]] = set()
 
-    minimum = min(tokens) if tokens else (0, 0)
+        for b_x_presses in range(start, end):
+            a_x_presses = (prize_x - (bx * b_x_presses)) / ax
+            if a_x_presses < 0 or a_x_presses != int(a_x_presses):
+                continue
+            tokens_a.add((int(a_x_presses), b_x_presses))
+            print(a_x_presses)
 
-    return minimum
+        for b_y_presses in range(start, end):
+            a_y_presses = (prize_y - (by * b_y_presses)) / ay
+            if a_y_presses < 0 or a_y_presses != int(a_y_presses):
+                continue
+            tokens_b.add((int(a_y_presses), b_y_presses))
+            print(a_y_presses)
+
+        tokens.extend(tokens_b.intersection(tokens_a))
+        print(tokens)
+
+        # for i in range(limit):
+        #     for j in range(limit):
+        #         if ax * i + bx * j == prize_x and ay * i + by * j == prize_y:
+        #             tokens.append((i, j))
+
+        minimum = min(tokens) if tokens else (0, 0)
+
+        return minimum
+
+    return get_num_tokens_inner
 
 
 def run(data: str, part_2: bool = False):
@@ -65,5 +94,5 @@ def run(data: str, part_2: bool = False):
     """
     machines = data.strip().split("\n\n")
     parsed = list(map(parse_machine, machines))
-    num_tokens = list(map(get_num_tokens, parsed))
+    num_tokens = list(map(get_num_tokens(part_2), parsed))
     return sum((a * 3 + b * 1 for a, b in num_tokens))
