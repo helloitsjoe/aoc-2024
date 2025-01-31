@@ -64,14 +64,16 @@ def get_num_tokens(part_2: bool) -> Callable:
             if a_x_presses < 0 or a_x_presses != int(a_x_presses):
                 continue
             tokens_a.add((int(a_x_presses), b_x_presses))
-            print(a_x_presses)
+            # print(a_x_presses)
+
+        print("middle")
 
         for b_y_presses in range(start, end):
             a_y_presses = (prize_y - (by * b_y_presses)) / ay
             if a_y_presses < 0 or a_y_presses != int(a_y_presses):
                 continue
             tokens_b.add((int(a_y_presses), b_y_presses))
-            print(a_y_presses)
+            # print(a_y_presses)
 
         tokens.extend(tokens_b.intersection(tokens_a))
         print(tokens)
