@@ -1,3 +1,6 @@
+from functools import reduce
+import os
+
 DATA_FILE = "day_14.txt"
 
 TEST_DATA = """
@@ -36,10 +39,11 @@ def tick(robots: Robots, w: int, h: int) -> Robots:
     for (px, py), (vx, vy) in robots:
         next_x = px + vx
         next_y = py + vy
-        if next_x >= w:
-            next_x -= w
-        if next_y >= h:
-            next_y -= h
+        # TODO: account for way off
+        if next_x >= w or next_x < 0:
+            next_x = next_x % w
+        if next_y >= h or next_y < 0:
+            next_y = next_y % h
         rtn.append(((next_x, next_y), (vx, vy)))
     return rtn
 
@@ -51,18 +55,35 @@ def loop(initial_robots: Robots, w: int, h: int, times: int) -> Robots:
     return robots
 
 
-def count_robots(robots: Robots, w: int, h: int) -> int:
-    count = 0
+def count_robots(robots: Robots, w: int, h: int) -> tuple[int, int, int, int]:
+    q1, q2, q3, q4 = 0, 0, 0, 0
     for (px, py), _ in robots:
-        if px != w // 2 and py != h // 2:
-            count += 1
-    return count
+        if px == w // 2 or py == h // 2:
+            continue
+        if px < w // 2:
+            if py < h // 2:
+                q1 += 1
+            else:
+                q3 += 1
+        else:
+            if py < h // 2:
+                q2 += 1
+            else:
+                q4 += 1
+    return (q1, q2, q3, q4)
 
 
+def get_safety_factor(robot_counts: tuple[int, int, int, int]) -> int:
+    return reduce(lambda acc, n: acc * n, list(robot_counts))
+
+
+# 91201968 too low
 def run(data: str, part_2: bool = False):
-    w = 101 if part_2 else 11
-    h = 103 if part_2 else 7
+    w = 11 if os.getenv("TEST") else 101
+    h = 7 if os.getenv("TEST") else 103
+    print(w)
     # floor = [list(range(width)) for row in range(height)]
     robots = parse_robots(data)
-
-    return robots
+    new_position = loop(robots, w, h, 100)
+    robot_counts = count_robots(new_position, w, h)
+    return get_safety_factor(robot_counts)
