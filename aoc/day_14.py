@@ -48,10 +48,46 @@ def tick(robots: Robots, w: int, h: int) -> Robots:
     return rtn
 
 
+def draw(robots: Robots, w: int, h: int, i: int) -> None:
+    should_print = False
+    found = False
+    floor = [[" " for _ in range(w)] for row in range(h)]
+    for (px, py), _ in robots:
+        floor[py][px] = "X"
+
+    # Also check for no X on sides
+    # for y, row in enumerate(floor):
+    #     if found:
+    #         break
+    #     for x, sq in enumerate(row):
+    #         if (
+    #             sq == "X"
+    #             and y - 4 > 0
+    #             and x - 4 > 0
+    #             and floor[y - 4][x - 4] == "X"
+    #             and floor[y - 3][x - 3] == "X"
+    #             and floor[y - 2][x - 2] == "X"
+    #             and floor[y - 1][x - 1] == "X"
+    #         ):
+    #             found = True
+    #             should_print = True
+    #             # print("".join(floor[0]))
+    #             # print("".join(floor[1]))
+    #             # print("".join(floor[2]))
+    #             # print("".join(floor[3]))
+    #             print("\n".join(["".join(row) for row in floor]))
+
+    if i == 17495:
+        print("\n".join(["".join(row) for row in floor]))
+    if should_print:
+        print("=" * 20 + " " + str(i))
+
+
 def loop(initial_robots: Robots, w: int, h: int, times: int) -> Robots:
     robots = initial_robots
-    for _ in range(times):
+    for i in range(times):
         robots = tick(robots, w, h)
+        draw(robots, w, h, i)
     return robots
 
 
@@ -82,8 +118,7 @@ def run(data: str, part_2: bool = False):
     w = 11 if os.getenv("TEST") else 101
     h = 7 if os.getenv("TEST") else 103
     print(w)
-    # floor = [list(range(width)) for row in range(height)]
     robots = parse_robots(data)
-    new_position = loop(robots, w, h, 100)
+    new_position = loop(robots, w, h, 100000000)
     robot_counts = count_robots(new_position, w, h)
     return get_safety_factor(robot_counts)
