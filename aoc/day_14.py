@@ -39,7 +39,6 @@ def tick(robots: Robots, w: int, h: int) -> Robots:
     for (px, py), (vx, vy) in robots:
         next_x = px + vx
         next_y = py + vy
-        # TODO: account for way off
         if next_x >= w or next_x < 0:
             next_x = next_x % w
         if next_y >= h or next_y < 0:
@@ -55,32 +54,32 @@ def draw(robots: Robots, w: int, h: int, i: int) -> None:
     for (px, py), _ in robots:
         floor[py][px] = "X"
 
-    # Also check for no X on sides
-    # for y, row in enumerate(floor):
-    #     if found:
-    #         break
-    #     for x, sq in enumerate(row):
-    #         if (
-    #             sq == "X"
-    #             and y - 4 > 0
-    #             and x - 4 > 0
-    #             and floor[y - 4][x - 4] == "X"
-    #             and floor[y - 3][x - 3] == "X"
-    #             and floor[y - 2][x - 2] == "X"
-    #             and floor[y - 1][x - 1] == "X"
-    #         ):
-    #             found = True
-    #             should_print = True
-    #             # print("".join(floor[0]))
-    #             # print("".join(floor[1]))
-    #             # print("".join(floor[2]))
-    #             # print("".join(floor[3]))
-    #             print("\n".join(["".join(row) for row in floor]))
+    # Look for a pattern with diagonals
+    for y, row in enumerate(floor):
+        if found:
+            break
+        for x, sq in enumerate(row):
+            if (
+                sq == "X"
+                and y - 4 > 0
+                and x - 4 > 0
+                and y + 4 < len(floor)
+                and x + 4 < len(floor[0])
+                and floor[y - 4][x - 4] == "X"
+                and floor[y - 3][x - 3] == "X"
+                and floor[y - 2][x - 2] == "X"
+                and floor[y - 1][x - 1] == "X"
+                and floor[y + 4][x + 4] == "X"
+                and floor[y + 3][x + 3] == "X"
+                and floor[y + 2][x + 2] == "X"
+                and floor[y + 1][x + 1] == "X"
+            ):
+                found = True
+                should_print = True
+                print("\n".join(["".join(row) for row in floor]))
 
-    if i == 17495:
-        print("\n".join(["".join(row) for row in floor]))
     if should_print:
-        print("=" * 20 + " " + str(i))
+        print("=" * 20 + " " + str(i + 1))
 
 
 def loop(initial_robots: Robots, w: int, h: int, times: int) -> Robots:
@@ -113,7 +112,6 @@ def get_safety_factor(robot_counts: tuple[int, int, int, int]) -> int:
     return reduce(lambda acc, n: acc * n, list(robot_counts))
 
 
-# 91201968 too low
 def run(data: str, part_2: bool = False):
     w = 11 if os.getenv("TEST") else 101
     h = 7 if os.getenv("TEST") else 103
