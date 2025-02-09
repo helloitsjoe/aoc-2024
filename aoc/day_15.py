@@ -45,22 +45,37 @@ Dir = {
 }
 
 
+def step(
+    move: str, curr: tuple[int, int], room: list[list[str]]
+) -> tuple[tuple[int, int], list[list[str]]]:
+    x, y = curr
+    dir_x, dir_y = Dir[move][0], Dir[move][1]
+    next_x = x + dir_x
+    next_y = y + dir_y
+    if room[next_y][next_x] == "#":
+        return curr, room
+
+    room[y][x] = "."
+    if room[next_y][next_x] == "O":
+        room[next_y + dir_y][next_x + dir_x] = "O"
+    room[next_y][next_x] = "@"
+    return (next_x, next_y), room
+
+
 def walk(room: list[list[str]], moves: str):
-    start = (0, 0)
+    curr = (0, 0)
     for y, row in enumerate(room):
         for x, sq in enumerate(row):
             if sq == "@":
-                start = (x, y)
+                curr = (x, y)
 
     for move in moves:
-        next_x, next_y = Dir[move][0], Dir[move][1]
-        if room[next_y][next_x] == "#":
-            continue
+        curr, room = step(move, curr, room)
 
 
 def parse_input(data: str) -> tuple[list[list[str]], str]:
-    room_input, moves = data.split("\n\n")
-    room = [list(row) for row in room_input]
+    room_input, moves = data.strip().split("\n\n")
+    room = [list(row) for row in room_input.strip().splitlines()]
     return room, moves
 
 
