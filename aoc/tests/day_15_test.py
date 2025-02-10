@@ -1,4 +1,11 @@
-from aoc.day_15 import step, parse_input
+from aoc.day_15 import (
+    walk,
+    step,
+    parse_input,
+    get_gps_sum,
+    stringify,
+    TEST_DATA,
+)
 
 DATA = """
 #####
@@ -19,6 +26,19 @@ def create_wide_input(inside: str):
 
 >
 """
+
+
+def test_get_gps_sum():
+    data = """
+####
+#O.#
+#.O#
+####
+
+<
+"""
+    room, _ = parse_input(data)
+    assert get_gps_sum(room) == 303
 
 
 def test_parse_input():
@@ -147,3 +167,53 @@ def test_step_box_move_up():
     assert "".join(room[3]) == "#@#"
     assert "".join(room[4]) == "#.#"
     assert "".join(room[5]) == "###"
+
+
+def test_walk():
+    test_data_small = """
+########
+#..O.O.#
+##@.O..#
+#...O..#
+#.#.O..#
+#...O..#
+#......#
+########
+
+<^^>>>vv<v>>v<<
+    """
+    room, moves = parse_input(test_data_small)
+    room = walk(room, moves)
+    assert (
+        stringify(room)
+        == """
+########
+#....OO#
+##.....#
+#.....O#
+#.#O@..#
+#...O..#
+#...O..#
+########
+"""
+    )
+
+
+def test_walk_test_data():
+    room, moves = parse_input(TEST_DATA)
+    room = walk(room, moves)
+    assert (
+        stringify(room)
+        == """
+##########
+#.O.O.OOO#
+#........#
+#OO......#
+#OO@.....#
+#O#.....O#
+#O.....OO#
+#O.....OO#
+#OO....OO#
+##########
+"""
+    )

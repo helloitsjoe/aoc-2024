@@ -45,34 +45,57 @@ Dir = {
 }
 
 
+def stringify(room: list[list[str]], wrap: bool = True) -> str:
+    result = "\n".join(["".join(row) for row in room])
+    return "\n" + result + "\n" if wrap else result
+
+
+def get_box_gps(coords: tuple[int, int]) -> int:
+    x, y = coords
+    return 100 * y + x
+
+
+def get_gps_sum(room: list[list[str]]) -> int:
+    total = 0
+    for y, row in enumerate(room):
+        for x, sq in enumerate(row):
+            if sq == "O":
+                total += get_box_gps((x, y))
+    return total
+
+
 def find_empty_space(
     start: tuple[int, int], direction: tuple[int, int], room: list[list[str]]
 ) -> tuple[int, int] | None:
     x, y = start
     dir_x, dir_y = direction
 
-    # TODO:
-    # ['#', 'O', '#', '@', '.', '.', '.', '#'] should be
-    # ['#', '.', '#', 'O', '@', '.', '.', '#']
-
     if dir_x == 1:
         for i, sq in enumerate(room[y][x:]):
+            if sq == "#":
+                return None
             if sq == ".":
                 return x + i, y
 
     if dir_x == -1:
         # include @ at x + 1
         for i, sq in enumerate(reversed(room[y][: x + 1])):
+            if sq == "#":
+                return None
             if sq == ".":
                 return x - i, y
 
     if dir_y == 1:
         for j, row in enumerate(room[y:]):
+            if row[x] == "#":
+                return None
             if row[x] == ".":
                 return x, y + j
 
     if dir_y == -1:
         for j, row in enumerate(reversed(room[: y + 1])):
+            if row[x] == "#":
+                return None
             if row[x] == ".":
                 return x, y - j
 
@@ -118,10 +141,13 @@ def walk(room: list[list[str]], moves: str):
 def parse_input(data: str) -> tuple[list[list[str]], str]:
     room_input, moves = data.strip().split("\n\n")
     room = [list(row) for row in room_input.strip().splitlines()]
+    moves = "".join(moves.splitlines())
     return room, moves
 
 
 def run(data: str, part_2: bool):
-    room, moves = parse_input(test_data_small)
+    room, moves = parse_input(data)
     room = walk(room, moves)
-    return room
+    print(stringify(room))
+    gps_sum = get_gps_sum(room)
+    return gps_sum
