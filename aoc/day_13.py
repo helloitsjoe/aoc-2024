@@ -50,9 +50,6 @@ def get_num_tokens(part_2: bool) -> Callable:
     end = (10**11) if part_2 else 100
 
     def get_num_tokens_inner(machine: Machine) -> tuple[int, int]:
-        print("here")
-        print("start", start)
-        print("end", end)
         (ax, ay), (bx, by), (prize_x, prize_y) = machine
 
         tokens: list[tuple[int, int]] = []
@@ -66,8 +63,6 @@ def get_num_tokens(part_2: bool) -> Callable:
             tokens_a.add((int(a_x_presses), b_x_presses))
             # print(a_x_presses)
 
-        print("middle")
-
         for b_y_presses in range(start, end):
             a_y_presses = (prize_y - (by * b_y_presses)) / ay
             if a_y_presses < 0 or a_y_presses != int(a_y_presses):
@@ -76,7 +71,6 @@ def get_num_tokens(part_2: bool) -> Callable:
             # print(a_y_presses)
 
         tokens.extend(tokens_b.intersection(tokens_a))
-        print(tokens)
 
         # for i in range(limit):
         #     for j in range(limit):

@@ -45,6 +45,40 @@ Dir = {
 }
 
 
+def find_empty_space(
+    start: tuple[int, int], direction: tuple[int, int], room: list[list[str]]
+) -> tuple[int, int] | None:
+    x, y = start
+    dir_x, dir_y = direction
+
+    # TODO:
+    # ['#', 'O', '#', '@', '.', '.', '.', '#'] should be
+    # ['#', '.', '#', 'O', '@', '.', '.', '#']
+
+    if dir_x == 1:
+        for i, sq in enumerate(room[y][x:]):
+            if sq == ".":
+                return x + i, y
+
+    if dir_x == -1:
+        # include @ at x + 1
+        for i, sq in enumerate(reversed(room[y][: x + 1])):
+            if sq == ".":
+                return x - i, y
+
+    if dir_y == 1:
+        for j, row in enumerate(room[y:]):
+            if row[x] == ".":
+                return x, y + j
+
+    if dir_y == -1:
+        for j, row in enumerate(reversed(room[: y + 1])):
+            if row[x] == ".":
+                return x, y - j
+
+    return None
+
+
 def step(
     move: str, curr: tuple[int, int], room: list[list[str]]
 ) -> tuple[tuple[int, int], list[list[str]]]:
@@ -52,12 +86,18 @@ def step(
     dir_x, dir_y = Dir[move][0], Dir[move][1]
     next_x = x + dir_x
     next_y = y + dir_y
-    if room[next_y][next_x] == "#":
+
+    empty_space = find_empty_space(curr, (dir_x, dir_y), room)
+
+    if empty_space is None:
         return curr, room
 
+    empty_x, empty_y = empty_space
     room[y][x] = "."
     if room[next_y][next_x] == "O":
-        room[next_y + dir_y][next_x + dir_x] = "O"
+        room[empty_y][empty_x] = "O"
+        # room[next_y + dir_y][next_x + dir_x] = "O"
+
     room[next_y][next_x] = "@"
     return (next_x, next_y), room
 
@@ -72,6 +112,8 @@ def walk(room: list[list[str]], moves: str):
     for move in moves:
         curr, room = step(move, curr, room)
 
+    return room
+
 
 def parse_input(data: str) -> tuple[list[list[str]], str]:
     room_input, moves = data.strip().split("\n\n")
@@ -80,4 +122,6 @@ def parse_input(data: str) -> tuple[list[list[str]], str]:
 
 
 def run(data: str, part_2: bool):
-    return parse_input(data)
+    room, moves = parse_input(test_data_small)
+    room = walk(room, moves)
+    return room
