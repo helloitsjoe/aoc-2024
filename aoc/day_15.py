@@ -56,12 +56,12 @@ def get_box_gps(coords: tuple[int, int]) -> int:
 
 
 def get_gps_sum(room: list[list[str]]) -> int:
-    total = 0
-    for y, row in enumerate(room):
-        for x, sq in enumerate(row):
-            if sq == "O":
-                total += get_box_gps((x, y))
-    return total
+    return sum(
+        get_box_gps((x, y))
+        for y, row in enumerate(room)
+        for x, sq in enumerate(row)
+        if sq == "O"
+    )
 
 
 def find_empty_space(
@@ -70,34 +70,13 @@ def find_empty_space(
     x, y = start
     dir_x, dir_y = direction
 
-    if dir_x == 1:
-        for i, sq in enumerate(room[y][x:]):
-            if sq == "#":
-                return None
-            if sq == ".":
-                return x + i, y
-
-    if dir_x == -1:
-        # include @ at x + 1
-        for i, sq in enumerate(reversed(room[y][: x + 1])):
-            if sq == "#":
-                return None
-            if sq == ".":
-                return x - i, y
-
-    if dir_y == 1:
-        for j, row in enumerate(room[y:]):
-            if row[x] == "#":
-                return None
-            if row[x] == ".":
-                return x, y + j
-
-    if dir_y == -1:
-        for j, row in enumerate(reversed(room[: y + 1])):
-            if row[x] == "#":
-                return None
-            if row[x] == ".":
-                return x, y - j
+    while 0 <= x < len(room[0]) and 0 <= y < len(room):
+        x += dir_x
+        y += dir_y
+        if room[y][x] == "#":
+            return None
+        if room[y][x] == ".":
+            return x, y
 
     return None
 
@@ -119,7 +98,6 @@ def step(
     room[y][x] = "."
     if room[next_y][next_x] == "O":
         room[empty_y][empty_x] = "O"
-        # room[next_y + dir_y][next_x + dir_x] = "O"
 
     room[next_y][next_x] = "@"
     return (next_x, next_y), room
