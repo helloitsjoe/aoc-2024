@@ -1,5 +1,6 @@
 DATA_FILE = "data_16.txt"
 
+# 7036
 TEST_DATA = """
 ###############
 #.......#....E#
@@ -18,6 +19,7 @@ TEST_DATA = """
 ###############
 """
 
+# 11048
 TEST_DATA_2 = """
 #################
 #...#...#...#..E#
@@ -40,4 +42,10 @@ TEST_DATA_2 = """
 
 
 def run(data: str, part_2: bool):
+    """
+    Reindeer starts on S facing East, needs to reach E.
+    Moving forward increases score by 1, rotating 90 deg increases by 1000
+    """
+    # DFS
+    # Look out for loops
     return data
